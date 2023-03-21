@@ -33,3 +33,6 @@
 
 # Eclipse files
 /.metadata/
+
+# CMake dirs
+build/
