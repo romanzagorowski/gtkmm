@@ -21,7 +21,7 @@ add_definitions(
     ${GTKMM_CFLAGS_OTHER}
 )
 
-add_executable(tfzoom01 main.cpp)
+add_executable(tfzoom01 main.cpp f0.cpp f1.cpp)
 
 target_link_libraries(
     tfzoom01
