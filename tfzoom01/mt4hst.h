@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#pragma pack(push, 1)
+
 namespace mt4::hst
 {
 
@@ -39,3 +41,5 @@ namespace mt4::hst
         std::uint64_t   real_volume;
     };
 }
+
+#pragma pack(pop)

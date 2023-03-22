@@ -4,100 +4,89 @@
 #include "errno.h"
 #include "assert.h"
 
-/*
-#include <exception>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <vector>
 
-class errno_exception : public std::exception
+namespace fs = std::filesystem;
+
+void read_hst_header(
+    std::istream& stream,
+    mt4::hst::header& header
+)
 {
-public:
-
-};
-*/
-
-bool read_hst_header(FILE* f, mt4::hst::header& h)
-{
-    assert(f);
-
-    return fread(&h, sizeof(h), 1, f) == 1;
+    stream.read((char*)&header, sizeof(header));
 }
 
-long get_file_size(FILE* f)
+void print_hst_header(
+    std::ostream& stream,
+    const mt4::hst::header& header
+)
 {
-    assert(f);
+    stream << "{ version=" << header.version << " }" << std::endl;
+}
 
-    const long current_pos = ftell(f);
-    assert(-1L != current_pos);
+void print_hst_record(
+    std::ostream& stream,
+    const mt4::hst::record_v401& record,
+    std::uint32_t digits
+)
+{
+    // https://stackoverflow.com/questions/11989374/floating-point-format-for-stdostream
 
-    const int e1 = fseek(f, 0, SEEK_END);
-    assert(0 == e1);
+    stream << std::fixed;
+    stream << std::setprecision(digits);
 
-    const long file_size = ftell(f);
-    assert(-1L != file_size);
-
-    fseek(f, current_pos, SEEK_SET);
-
-    return file_size;
+    stream << "{ "
+        << "ctm=" << record.ctm << ", "
+        << "open=" << record.open << ", "
+        << "high=" << record.high << ", "
+        << "low=" << record.low << ", "
+        << "close=" << record.close << ", "
+        << "volume=" << record.volume << ", "
+        << "spread=" << record.spread << ", "
+        << "real_volume=" << record.real_volume
+        << " }"
+        << std::endl;
 }
 
 const char* hst_filename = "/home/roman/tmp/EURUSD.1.hst";
 
 int f1()
 {
-    FILE* f = fopen(hst_filename, "r");
+    const std::uintmax_t file_size = fs::file_size(hst_filename);
 
-    if(nullptr == f)
+    std::cout << "file_size=" << file_size << std::endl;
+
+    std::ifstream stream{hst_filename};
+
+    mt4::hst::header header{};
+    read_hst_header(stream, header);
+    print_hst_header(std::cout, header);
+
+    if(header.version == 401)
     {
-        fprintf(
-            stderr, 
-            "ERROR: f1(): Failed to open the file '%s' for reading (errno='%d', errstr='%s').\n", 
-            hst_filename, 
-            errno, 
-            strerror(errno)
-        );
+        const auto number_of_records = (file_size - sizeof(mt4::hst::header)) / sizeof(mt4::hst::record_v401);
 
-        return 1;
+        std::cout << "number_of_records=" << number_of_records << std::endl;
+        std::cout << (file_size - sizeof(mt4::hst::header)) % sizeof(mt4::hst::record_v401) << std::endl;
+
+        std::vector<mt4::hst::record_v401> records{number_of_records};
+        //records.reserve(number_of_records);
+
+        std::cout << "records.size()=" << records.size() << std::endl;
+
+        stream.read((char*)records.data(), records.size() * sizeof(mt4::hst::record_v401));
+
+        std::cout << "stream.good()=" << std::boolalpha << stream.good() << std::endl;
+        std::cout << "stream.eof()="  << std::boolalpha << stream.eof()  << std::endl;
+
+        for(const auto& record : records)
+        {
+            print_hst_record(std::cout, record, header.digits);
+        }
     }
-    else
-    {
-        fprintf(
-            stdout, 
-            "INFO: f1(): Succeeded to open the file '%s' for reading!\n", 
-            hst_filename
-        );
-    }
-
-    //-------------------------------------------------------------------------
-
-    const long file_size = get_file_size(f);
-    assert(-1L != file_size);
-
-    fprintf(stdout, "INFO: f1(): The size of the file '%s' is %ld.\n", hst_filename, file_size);
-
-    //-------------------------------------------------------------------------
-
-    mt4::hst::header h{};
-
-    if(!read_hst_header(f, h))
-    {
-        fprintf(
-            stderr, 
-            "ERROR: f1(): Failed to read hst header from the file '%s' for reading (errno='%d', errstr='%s').\n", 
-            hst_filename, 
-            errno, 
-            strerror(errno)
-        );
-
-        return 2;
-    }
-
-    //-------------------------------------------------------------------------
-
-    // TODO: To be continued...
-
-    //-------------------------------------------------------------------------
-
-    if(f)
-        fclose(f);
 
     return 0;
 }
