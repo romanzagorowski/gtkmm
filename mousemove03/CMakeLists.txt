@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(tfzoom01 VERSION 0.1.0)
+project(mousemove03 VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
@@ -20,10 +20,10 @@ add_definitions(
     ${GTKMM_CFLAGS_OTHER}
 )
 
-add_executable(tfzoom01 main.cpp f0.cpp f1.cpp MyWindow.cpp MyArea.cpp)
+add_executable(mousemove03 main.cpp)
 
 target_link_libraries(
-    tfzoom01
+    mousemove03
     ${GTKMM_LIBRARIES}
 )
 

@@ -19,7 +19,7 @@ namespace mt4::hst
         std::uint32_t   unused[13];
     };
 
-    struct record_v400
+    struct record_400
     {
         std::uint32_t   ctm;
         double          open;
@@ -29,7 +29,7 @@ namespace mt4::hst
         double          volume;
     };
 
-    struct record_v401
+    struct record_401
     {
         std::uint64_t   ctm;
         double          open;

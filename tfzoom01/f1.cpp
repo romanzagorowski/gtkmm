@@ -19,6 +19,17 @@ void read_hst_header(
     stream.read((char*)&header, sizeof(header));
 }
 
+void read_hst_records(
+    std::ifstream& stream,
+    const std::uintmax_t file_size,
+    std::vector<mt4::hst::record_401>& records
+)
+{
+    const auto number_of_records = (file_size - sizeof(mt4::hst::header)) / sizeof(mt4::hst::record_401);
+    records.resize(number_of_records);
+    stream.read((char*)records.data(), records.size() * sizeof(mt4::hst::record_401));
+}
+
 void print_hst_header(
     std::ostream& stream,
     const mt4::hst::header& header
@@ -29,7 +40,7 @@ void print_hst_header(
 
 void print_hst_record(
     std::ostream& stream,
-    const mt4::hst::record_v401& record,
+    const mt4::hst::record_401& record,
     std::uint32_t digits
 )
 {
@@ -67,17 +78,17 @@ int f1()
 
     if(header.version == 401)
     {
-        const auto number_of_records = (file_size - sizeof(mt4::hst::header)) / sizeof(mt4::hst::record_v401);
+        const auto number_of_records = (file_size - sizeof(mt4::hst::header)) / sizeof(mt4::hst::record_401);
 
         std::cout << "number_of_records=" << number_of_records << std::endl;
-        std::cout << (file_size - sizeof(mt4::hst::header)) % sizeof(mt4::hst::record_v401) << std::endl;
+        std::cout << (file_size - sizeof(mt4::hst::header)) % sizeof(mt4::hst::record_401) << std::endl;
 
-        std::vector<mt4::hst::record_v401> records{number_of_records};
+        std::vector<mt4::hst::record_401> records{number_of_records};
         //records.reserve(number_of_records);
 
         std::cout << "records.size()=" << records.size() << std::endl;
 
-        stream.read((char*)records.data(), records.size() * sizeof(mt4::hst::record_v401));
+        stream.read((char*)records.data(), records.size() * sizeof(mt4::hst::record_401));
 
         std::cout << "stream.good()=" << std::boolalpha << stream.good() << std::endl;
         std::cout << "stream.eof()="  << std::boolalpha << stream.eof()  << std::endl;
