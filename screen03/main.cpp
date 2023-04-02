@@ -80,11 +80,11 @@ public:
 
 private:
     Gtk::DrawingArea area;
-    double area_translate_x = 0;
-    double area_translate_y = 0;
+    gdouble area_translate_x = 0;
+    gdouble area_translate_y = 0;
 
-    int last_x;
-    int last_y;
+    gdouble last_x;
+    gdouble last_y;
 
 private:
     bool area_on_motion_notify_event(GdkEventMotion* event)
@@ -96,8 +96,8 @@ private:
             << std::endl
         ;
 
-        const int delta_x = event->x - this->last_x;
-        const int delta_y = event->y - this->last_y;
+        const gdouble delta_x = event->x - this->last_x;
+        const gdouble delta_y = event->y - this->last_y;
 
         this->last_x = event->x;
         this->last_y = event->y;
