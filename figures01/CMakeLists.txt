@@ -25,7 +25,7 @@ add_definitions(
     ${Boost_CFLAGS_OTHER}
 )
 
-add_executable(figures01 main.cpp MyWindow.cpp MyWindow.h MyGtkUtils.cpp MyGtkUtils.h)
+add_executable(figures01 main.cpp mywindow.cpp mywindow.h mygtkutils.cpp mygtkutils.h)
 
 target_link_libraries(
     figures01

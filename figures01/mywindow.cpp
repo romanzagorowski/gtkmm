@@ -1,5 +1,5 @@
-#include "MyWindow.h"
-#include "MyGtkUtils.h"
+#include "mywindow.h"
+#include "mygtkutils.h"
 
 #include <iostream>
 

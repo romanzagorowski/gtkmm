@@ -1,4 +1,4 @@
-#include "MyGtkUtils.h"
+#include "mygtkutils.h"
 #include <iostream>
 
 namespace My

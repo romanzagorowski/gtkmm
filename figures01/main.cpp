@@ -1,4 +1,4 @@
-#include "MyWindow.h"
+#include "mywindow.h"
 
 #include <iostream>
 #include <gtkmm/application.h>
