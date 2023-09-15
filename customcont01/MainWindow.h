@@ -2,7 +2,10 @@
 
 #include <gtkmm/window.h>
 #include <gtkmm/button.h>
-#include <gtkmm/vbox.h>
+#include <gtkmm/box.h>
+#include <gtkmm/label.h>
+
+#include "MyContainer.h"
 
 namespace Abc
 {
@@ -10,15 +13,22 @@ namespace Abc
     {
     public:
         MainWindow();
-        virtual MainWindow();
+        virtual ~MainWindow();
 
     protected:
-        // signal handlers
+        // Signal handlers
         void on_button_quit();
 
-        // child widgets
+        // Child widgets
         Gtk::Box vbox_;
         Gtk::Button button_one_;
+        Gtk::Label label_two_;
 
+        // A restricton with MyContainer is that it must be deleted before its children,
+        // meaning that it must be declared after its children.
+        Abc::MyContainer container_;
+
+        Gtk::Box button_box_;
+        Gtk::Button quit_button_;
     };
 }

@@ -12,11 +12,13 @@ enable_testing()
 set(SOURCES
     main.cpp
     MainWindow.cpp
+    MyContainer.cpp
 )
 
 set(
     HEADERS
     MainWindow.h
+    MyContainer.h
 )
 
 add_executable(${PROJECT_TARGET} ${SOURCES} ${HEADERS})
