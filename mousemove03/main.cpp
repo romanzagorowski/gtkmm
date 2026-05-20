@@ -83,9 +83,21 @@ namespace My
             this->area.signal_draw().connect(
                 sigc::mem_fun(*this, &My::Window::area_on_draw)
             );
+
+            this->area.signal_size_allocate().connect(
+                sigc::mem_fun(*this, &My::Window::area_on_size_allocate)
+            );
         }
 
     private:
+        void area_on_size_allocate(Gtk::Allocation& a)
+        {
+            const auto w = a.get_width();
+            const auto h = a.get_height();
+
+            std::println("area_on_size_allocate(): width={}, height={}", w, h);
+        }
+
         bool area_on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         {
             Gtk::Allocation a = this->area.get_allocation();
@@ -93,27 +105,36 @@ namespace My
             const auto w = a.get_width();
             const auto h = a.get_height();
 
-            std::println("area_on_draw(): width={}, height={}", w, h);
-
-            // std::cout << ""
-            //     << "width=" << a.get_width() << ", hegiht=" << a.get_height() << std::endl;
-
             cr->set_source_rgb(1, 0, 0);
-            cr->rectangle(0, 0, a.get_width(), a.get_height());
-            cr->fill();
+            
+            cr->move_to(0, motion_y);
+            cr->line_to(w, motion_y);
+            
+            cr->move_to(motion_x, 0);
+            cr->line_to(motion_x, h);
+            
+            cr->stroke();
 
             return true;
         }
 
         bool area_on_motion_notify_event(GdkEventMotion* e)
         {
-            std::cout << "area_on_motion_notify_event(): "
-                << "x=" << e->x << ", y=" << e->y << ", x_root=" << e->x_root << ", y_root=" << e->y_root << std::endl;
+            std::println("area_on_motion_notify_event(): x={}, y={}, x_root={}, y_root={}", 
+                e->x, e->y, e->x_root, e->y_root
+            );
+
+            this->motion_x = e->x;
+            this->motion_y = e->y;
+
+            area.queue_draw();
             
             return true;
         }
 
     private:
+        double motion_x{}, motion_y{};
+
         Gtk::DrawingArea area;
     };
 }
@@ -123,7 +144,6 @@ int main(int argc, char* argv[])
     auto app = Gtk::Application::create(argc, argv, "org.gnome.example");
 
     My::Window win;
-    //win.set_size_request(800, 600);
     win.set_default_size(800, 600);
     win.show_all();    
 
