@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(mousemove03 VERSION 0.1.0)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
 include(CTest)
 enable_testing()
 
@@ -26,6 +29,10 @@ target_link_libraries(
     mousemove03
     ${GTKMM_LIBRARIES}
 )
+
+if (MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+    target_link_libraries(${PROJECT_NAME} stdc++exp) # std:: print, println, ...
+endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

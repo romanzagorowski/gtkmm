@@ -3,6 +3,8 @@
 #include <gtkmm/window.h>
 #include <gtkmm/drawingarea.h>
 
+#include <print>
+
 void print_set_event_masks(Gtk::Widget& widget)
 {
   if(Gdk::EventMask::EXPOSURE_MASK & widget.get_events()) std::cout << "EXPOSURE_MASK" << std::endl;
@@ -74,9 +76,9 @@ namespace My
             std::cout << "Event masks for DrawingArea widget: \n";
             print_set_event_masks(area);
 
-            // this->area.signal_motion_notify_event().connect(
-            //     sigc::mem_fun(*this, &My::Window::area_on_motion_notify_event)
-            // );
+            this->area.signal_motion_notify_event().connect(
+                sigc::mem_fun(*this, &My::Window::area_on_motion_notify_event)
+            );
 
             this->area.signal_draw().connect(
                 sigc::mem_fun(*this, &My::Window::area_on_draw)
@@ -88,8 +90,13 @@ namespace My
         {
             Gtk::Allocation a = this->area.get_allocation();
 
-            std::cout << ""
-                << "width=" << a.get_width() << ", hegiht=" << a.get_height() << std::endl;
+            const auto w = a.get_width();
+            const auto h = a.get_height();
+
+            std::println("area_on_draw(): width={}, height={}", w, h);
+
+            // std::cout << ""
+            //     << "width=" << a.get_width() << ", hegiht=" << a.get_height() << std::endl;
 
             cr->set_source_rgb(1, 0, 0);
             cr->rectangle(0, 0, a.get_width(), a.get_height());
@@ -116,7 +123,8 @@ int main(int argc, char* argv[])
     auto app = Gtk::Application::create(argc, argv, "org.gnome.example");
 
     My::Window win;
-    win.set_size_request(800, 600);
+    //win.set_size_request(800, 600);
+    win.set_default_size(800, 600);
     win.show_all();    
 
     return app->run(win);
